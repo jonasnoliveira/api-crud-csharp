@@ -12,19 +12,19 @@ namespace ApiCrud.Students
 
             routesStudents.MapPost("", async (AddStudentRequest request, AppDbContext context, CancellationToken ct) =>
             {
-                var existStudant = await context.Students.AnyAsync(student => student.Name == request.Name, ct);
+                var existStudant = await context.Students.AnyAsync(student => student.Cpf == request.Cpf, ct);
 
                 if (existStudant)
                 {
                     return Results.Conflict(error: "Estudante existente!");
                 }
 
-                var newStudant = new Student(request.Name, request.Age); 
+                var newStudant = new Student(request.Name, request.Age, request.Email, request.Phone, request.Address, request.Cpf);
                 
                 await context.Students.AddAsync(newStudant, ct);
                 await context.SaveChangesAsync(ct);
 
-                var returnStudent = new StudentDto(newStudant.Id , newStudant.Name, newStudant.Age);
+                var returnStudent = new StudentDto(newStudant.Id , newStudant.Name, newStudant.Age, newStudant.Email, newStudant.Phone, newStudant.Address, newStudant.Cpf);
 
                 return Results.Ok(returnStudent);
             });
@@ -33,7 +33,7 @@ namespace ApiCrud.Students
             {
                 var students = await context.Students.
                 Where(student => student.Status).
-                Select(student => new StudentDto(student.Id, student.Name, student.Age)).
+                Select(student => new StudentDto(student.Id, student.Name, student.Age, student.Email, student.Phone, student.Address, student.Cpf)).
                 ToListAsync(ct);
 
                 return students;
@@ -46,10 +46,10 @@ namespace ApiCrud.Students
                 if (student == null) 
                     return Results.NotFound();
 
-                student.UpdateStudent(request.Name, request.Age);
+                student.UpdateStudent(request.Name, request.Age, request.Email, request.Phone, request.Address, request.Cpf);
 
                 await context.SaveChangesAsync(ct);
-                return Results.Ok(new StudentDto(student.Id, student.Name, student.Age));
+                return Results.Ok(new StudentDto(student.Id, student.Name, student.Age, student.Email, student.Phone, student.Address, student.Cpf));
             });
 
             routesStudents.MapDelete("{id}", async (Guid id, AppDbContext context, CancellationToken ct) =>
