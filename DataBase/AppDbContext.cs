@@ -9,7 +9,7 @@ namespace ApiCrud.DataBase
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Data Source=DataBaseStudents.db");
+            optionsBuilder.UseSqlite("Data Source=DataBaseStudentsDev.db");
             optionsBuilder.LogTo(Console.WriteLine);
             optionsBuilder.EnableSensitiveDataLogging(); // just development
 
